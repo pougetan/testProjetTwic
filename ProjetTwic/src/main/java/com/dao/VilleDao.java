@@ -1,9 +1,17 @@
 package com.dao;
 
-import java.util.List;
+import java.util.ArrayList;
+
+import com.dto.Ville;
 
 public interface VilleDao {
+	public ArrayList<Ville> getInfoVille();
 
-	public  String afficheVilles();
-	public String chercheVillesCP(String cp);
+	public void setVille(Ville ville);
+
+	public ArrayList<Ville> getInfoVilles(String param);
+
+	public void mettreAJour(Ville ville);
+
+	public void supprimerLigne(String code_commune_INSEE);
 }

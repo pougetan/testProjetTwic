@@ -1,41 +1,32 @@
 package com.config;
 
+import java.io.InputStream;
+import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.util.ResourceBundle;
 
-import com.dao.VilleDao;
-import com.dao.VilleDaoImpl;
-import  java.sql.Connection;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class JDBCConfiguration {
+	@Bean
+	public static Connection getonnexionBDD() {
+		String url = "jdbc:mysql://127.0.0.1/twic";
+		String user = "root";
+		String passwd = "";
+		Connection conn = null;
 
-	private String url;
-	private String username;
-	private String password;
-
-	JDBCConfiguration(String url, String username, String password) {
-		this.url = url;
-		this.username = username;
-		this.password = password;
-	}
-
-	public static JDBCConfiguration getInstance() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
+			conn = DriverManager.getConnection(url, user, passwd);
+			System.out.println("Connecter");
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Erreur");
+			System.exit(0);
 		}
-
-		JDBCConfiguration instance = new JDBCConfiguration("jdbc:mysql://127.0.0.1/twic", "root", "");
-		return instance;
-	}
-
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url, username, password);
-	} 
-
-	// Récupération du Dao
-	public VilleDao getVilleDao() {
-		return new VilleDaoImpl(this);
+		return conn;
 	}
 }
