@@ -20,7 +20,7 @@ public class JDBCConfiguration {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(url, user, passwd);
-			System.out.println("Connecter");
+			System.out.println("Connecté");
 
 		} catch (Exception e) {
 			e.printStackTrace();
