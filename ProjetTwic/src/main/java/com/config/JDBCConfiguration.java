@@ -10,20 +10,31 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JDBCConfiguration {
 	
-	@Bean
-	public static Connection getConnection() throws SQLException {
-		Connection conn = null;
-
-		try {
-			Class.forName("org.postgresql.Driver");
-			conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:15432/twic", "postgres", "postgres");
-			System.out.println("Connecté"); 
-
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Erreur");
-			System.exit(0);
-		}
-		return conn;
+	private  String url;
+    private  String user;
+    private  String psd;
+    
+    public JDBCConfiguration() {
 	}
+    JDBCConfiguration(String url, String user, String psd) {
+        this.url = url;
+        this.user = user;
+        this.psd = psd;
+    }
+    
+    public static JDBCConfiguration getInstance() {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+
+        }
+
+        JDBCConfiguration inst = new JDBCConfiguration("jdbc:postgresql://127.0.0.1:15432/Twic", "postgres", "postgres");
+        return inst;
+    }
+    
+    public Connection getConnection() throws SQLException {
+    	
+    	return DriverManager.getConnection(url, user, psd);
+    	} 
 }
