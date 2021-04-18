@@ -20,7 +20,11 @@ import com.dto.Ville;
 @Repository
 public class VilleDaoImpl implements VilleDao {
 	private static final Logger LOGGER = Logger.getLogger(Customizer.class);
+	private JDBCConfiguration jdbcConfiguration;
 	
+	public VilleDaoImpl(JDBCConfiguration jdbcConfiguration) {
+		this.jdbcConfiguration = jdbcConfiguration;
+	}
 	
 	public ArrayList<Ville> getInfoVille() {
 		Ville ville = null;
@@ -32,7 +36,7 @@ public class VilleDaoImpl implements VilleDao {
 		String requete = "SELECT * FROM ville_france";
 
 		try {
-			con = JDBCConfiguration.getConnection();
+			con = jdbcConfiguration.getConnection();
 			stmt = con.createStatement();
 			rs = stmt.executeQuery(requete);
 			while (rs.next()) {
@@ -77,7 +81,7 @@ public class VilleDaoImpl implements VilleDao {
 		Connection con = null;
 
 		try {
-			con = JDBCConfiguration.getConnection();
+			con = jdbcConfiguration.getConnection();
 			stmt = con.prepareStatement("SELECT * FROM ville_france WHERE Code_postal = ?;");
 			stmt.setString(1, param);
 			rs = stmt.executeQuery();
@@ -121,7 +125,7 @@ public class VilleDaoImpl implements VilleDao {
 		Statement stmt = null;
 		Connection con = null;
 		try {
-			con = JDBCConfiguration.getConnection();
+			con = jdbcConfiguration.getConnection();
 			stmt = con.createStatement();
 			stmt.executeUpdate(
 					"Insert into ville_france(Code_commune_INSEE,Nom_commune,Libelle_acheminement,Ligne_5,Latitude,Code_postal,Longitude)"
@@ -149,7 +153,7 @@ public class VilleDaoImpl implements VilleDao {
 		Connection con = null;
 		Statement stmt = null;
 		try {
-			con = JDBCConfiguration.getConnection();
+			con = jdbcConfiguration.getConnection();
 			stmt = con.createStatement();
 			stmt.executeUpdate("UPDATE ville_france SET Nom_commune=' " + Nom_commune + "', Code_postal='"
 					+ Code_postal + "', Libelle_acheminement='" + Libelle_acheminement
@@ -176,7 +180,7 @@ public class VilleDaoImpl implements VilleDao {
 		Connection con = null;
 		Statement stmt = null;
 		try {
-			con = JDBCConfiguration.getConnection();
+			con = jdbcConfiguration.getConnection();
 			stmt = con.createStatement();
 			stmt.executeUpdate("DELETE FROM ville_france WHERE Code_commune_INSEE = '" + code_commune_INSEE + "'");
 			return "Bravo, la suppression de votre ville a fonctionnée";
