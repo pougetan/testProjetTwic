@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.blo.VilleBLO;
 import com.dto.Ville;
 
-//import com.blo.VilleBLO;
-
 @RestController
 //@RequestMapping("/path")
 class VilleController {
@@ -25,7 +23,7 @@ class VilleController {
 	VilleBLO villeService;
 
 	// Methode GET
-	@RequestMapping(value = "/ville", method = RequestMethod.GET)
+	@RequestMapping(value = "/ville/get", method = RequestMethod.GET)
 	@ResponseBody
 	public ArrayList<Ville> appelGet(@RequestParam(required = false, value = "codePostal") String monParam)
 			throws ClassNotFoundException, SQLException {
@@ -36,27 +34,44 @@ class VilleController {
 	}
 
 	// Methode POST
-	@RequestMapping(value = "/ville", method = RequestMethod.POST)
+	@RequestMapping(value = "/ville/post", method = RequestMethod.POST)
 	@ResponseBody
-	public ArrayList<Ville> appelPost(@RequestBody Ville ville) throws ClassNotFoundException, SQLException {
+	public String appelPost(
+			@RequestParam(value = "Nom_commune") String Nom_commune,
+			@RequestParam(value = "Code_postal") String Code_postal,
+			@RequestParam(value = "Libelle_acheminement") String Libelle_acheminement,
+			@RequestParam(value = "Ligne_5") String Ligne_5,
+			@RequestParam(value = "Latitude") String Latitude,
+			@RequestParam(value = "Longitude") String Longitude,
+			@RequestParam(value = "Code_commune_INSEE") String Code_commune_INSEE) throws ClassNotFoundException, SQLException {
 		System.out.println("Appel POST");
-		villeService.creerVille(ville);
-		ArrayList<Ville> ville1 = null;
-		return ville1;
+		String msgc1 = villeService.creerVille(Nom_commune, Code_postal, Libelle_acheminement,
+				Ligne_5, Latitude, Longitude, Code_commune_INSEE);
+		return msgc1;
 	}
-
+	
 	// Methode PUT
-	@RequestMapping(value = "/ville", method = RequestMethod.PUT)
-	@ResponseBody
-	public void appelPut(@RequestBody Ville ville) throws ClassNotFoundException, SQLException {
-		System.out.println("Appel PUT");
-		villeService.mettreAJour(ville);
-	}
+		@RequestMapping(value = "/ville/put", method = RequestMethod.PUT)
+		@ResponseBody
+		public String appelPut(
+				@RequestParam(value = "Nom_commune") String Nom_commune,
+				@RequestParam(value = "Code_postal") String Code_postal,
+				@RequestParam(value = "Libelle_acheminement") String Libelle_acheminement,
+				@RequestParam(value = "Ligne_5") String Ligne_5,
+				@RequestParam(value = "Latitude") String Latitude,
+				@RequestParam(value = "Longitude") String Longitude,
+				@RequestParam(value = "Code_commune_INSEE") String Code_commune_INSEE) throws ClassNotFoundException, SQLException {
+			System.out.println("Appel PUT");
+			String msgu1 = villeService.mettreAJour(Nom_commune, Code_postal, Libelle_acheminement,
+					Ligne_5, Latitude, Longitude, Code_commune_INSEE);
+			return msgu1;
+		}
 
 	// Methode DELETE
-	@RequestMapping(value = "/ville/delete/{Code_commune_INSEE}", method = RequestMethod.DELETE)
-	public void deleteEmployeeById(@PathVariable String Code_commune_INSEE) throws Exception {
+	@RequestMapping(value = "/ville/delete", method = RequestMethod.DELETE)
+	public String appelDelete(@RequestParam(value = "Code_commune_INSEE") String Code_commune_INSEE) throws Exception {
 		System.out.println("Appel DELETE");
-		villeService.supprimerLigne(Code_commune_INSEE);
+		String msgd1 = villeService.supprimerLigne(Code_commune_INSEE);
+		return msgd1;
 	}
 }

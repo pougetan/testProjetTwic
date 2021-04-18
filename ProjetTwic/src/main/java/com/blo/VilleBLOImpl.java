@@ -23,16 +23,25 @@ public class VilleBLOImpl implements VilleBLO {
 		return ville;
 	}
 
-	public void creerVille(Ville ville) {
-		villeDao.setVille(ville);
+	public String creerVille(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
+			String Latitude, String Longitude , String Code_commune_INSEE) {
+		String msgc = villeDao.setVille(Nom_commune, Code_postal, Libelle_acheminement,
+				Ligne_5, Latitude, Longitude, Code_commune_INSEE);
+		return msgc;
 	}
 
-	public void mettreAJour(Ville ville) {
-		villeDao.mettreAJour(ville);
+	
+	public String mettreAJour(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
+			String Latitude, String Longitude , String Code_commune_INSEE) {
+		String msgu = villeDao.mettreAJour(Nom_commune, Code_postal, Libelle_acheminement,
+				Ligne_5, Latitude, Longitude, Code_commune_INSEE);
+		return msgu;
+				
 	}
 
-	public void supprimerLigne(String code_commune_INSEE) {
-		villeDao.supprimerLigne(code_commune_INSEE);
+	public String supprimerLigne(String code_commune_INSEE) {
+		String msgd = villeDao.supprimerLigne(code_commune_INSEE);
+		return msgd;
 	}
 
 }

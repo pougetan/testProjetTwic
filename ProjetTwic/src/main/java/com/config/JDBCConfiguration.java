@@ -1,24 +1,25 @@
 package com.config;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.util.ResourceBundle;
+import java.sql.SQLException;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JDBCConfiguration {
+	
+
 	@Bean
-	public static Connection getonnexionBDD() {
-		String url = "jdbc:mysql://127.0.0.1/twic";
-		String user = "root";
-		String passwd = "";
+	public static Connection getConnection() throws SQLException {
+		String url = "jdbc:postgresql://127.0.0.1:15432/twic";
+		String user = "postgres";
+		String passwd = "postgres";
 		Connection conn = null;
 
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("org.postgresql.Driver");
 			conn = DriverManager.getConnection(url, user, passwd);
 			System.out.println("Connecté");
 

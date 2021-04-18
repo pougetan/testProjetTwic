@@ -3,7 +3,6 @@ package com.dto;
 public class Ville {
 	
 	private String codeCommune;
-	
 	public String getCodeCommune() {
 		return codeCommune;
 	}
@@ -49,14 +48,9 @@ public class Ville {
 		this.latitude = latitude;
 	}
 	private String nomCommune;
-	
 	private String codePostal;
-	
-	private String libelleAcheminement;
-	
+	private String libelleAcheminement;	
 	private String ligne;
-	
 	private String longitude;
-	
 	private String latitude;
 }
