@@ -185,7 +185,7 @@ public class VilleDaoImpl implements VilleDao {
 			stmt.executeUpdate("DELETE FROM ville_france WHERE Code_commune_INSEE = '" + code_commune_INSEE + "'");
 			return "Bravo, la suppression de votre ville a fonctionnée";
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 			return "Echec, la suppression de votre ville n'a pas fonctionnée";
 		} finally {
 
