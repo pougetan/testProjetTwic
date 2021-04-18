@@ -7,24 +7,34 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.sql.PreparedStatement;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
+
 import org.springframework.stereotype.Repository;
+
+import java.beans.Customizer;
 
 import com.config.JDBCConfiguration;
 import com.dto.Ville;
 
 @Repository
 public class VilleDaoImpl implements VilleDao {
+	private static final Logger LOGGER = Logger.getLogger(Customizer.class);
+	
+	
 	public ArrayList<Ville> getInfoVille() {
 		Ville ville = null;
 		ArrayList<Ville> villes = new ArrayList<Ville>();
+		Statement stmt = null;
+		ResultSet rs = null;
 		Connection con = null;
 
 		String requete = "SELECT * FROM ville_france";
 
 		try {
 			con = JDBCConfiguration.getConnection();
-			Statement stmt = con.createStatement();
-			ResultSet rs = stmt.executeQuery(requete);
+			stmt = con.createStatement();
+			rs = stmt.executeQuery(requete);
 			while (rs.next()) {
 				ville = new Ville();
 				ville.setCodeCommune(rs.getString("Code_commune_INSEE"));
@@ -38,7 +48,23 @@ public class VilleDaoImpl implements VilleDao {
 			}
 			con.close();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
+		} finally {
+
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.ERROR, e);
+			} // Multiple streams were opened. Only the last is closed.
+			finally {
+				try {
+					if (rs != null)
+						rs.close();
+				} catch (SQLException e) {
+					LOGGER.log(Level.ERROR, e);
+				} 
+			}
 		}
 		return villes;
 	}
@@ -69,16 +95,34 @@ public class VilleDaoImpl implements VilleDao {
 			}
 			return villes;
 		} catch (SQLException e) {
-			System.out.println("Une erreur s'est produite.");
+			LOGGER.log(Level.ERROR, e);
 			return null;
+		} finally {
+
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.ERROR, e);
+			} 
+			finally {
+				try {
+					if (rs != null)
+						rs.close();
+				} catch (SQLException e) {
+					LOGGER.log(Level.ERROR, e);
+				} 
+			}
 		}
 	}
 
 	public String setVille(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
 			String Latitude, String Longitude , String Code_commune_INSEE ) {
+		Statement stmt = null;
+		Connection con = null;
 		try {
-			Connection con = JDBCConfiguration.getConnection();
-			Statement stmt = con.createStatement();
+			con = JDBCConfiguration.getConnection();
+			stmt = con.createStatement();
 			stmt.executeUpdate(
 					"Insert into ville_france(Code_commune_INSEE,Nom_commune,Libelle_acheminement,Ligne_5,Latitude,Code_postal,Longitude)"
 							+ " values(" + Code_commune_INSEE + ",'" + Nom_commune + "','"
@@ -86,17 +130,27 @@ public class VilleDaoImpl implements VilleDao {
 							+ "," + Code_postal + "," + Longitude + ")");
 			return "Bravo, la création de votre ville a fonctionnée";
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 			return "Echec, la création de votre ville n'a pas fonctionnée";
+		} finally {
+
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.ERROR, e);
+			} 
 		}
 	}
 
 	
 	public String mettreAJour(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
 			String Latitude, String Longitude , String Code_commune_INSEE ) {
+		Connection con = null;
+		Statement stmt = null;
 		try {
-			Connection con = JDBCConfiguration.getConnection();
-			Statement stmt = con.createStatement();
+			con = JDBCConfiguration.getConnection();
+			stmt = con.createStatement();
 			stmt.executeUpdate("UPDATE ville_france SET Nom_commune=' " + Nom_commune + "', Code_postal='"
 					+ Code_postal + "', Libelle_acheminement='" + Libelle_acheminement
 					+ "', Ligne_5 = '" + Ligne_5 + "', Latitude='" + Latitude + "', Longitude='"
@@ -104,21 +158,39 @@ public class VilleDaoImpl implements VilleDao {
 			return "Bravo, la mise à jour de votre ville a fonctionnée";
 
 		} catch (SQLException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.ERROR, e);
 			return "Echec, la mise à jour de votre ville n'a pas fonctionnée";
+		} finally {
+
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.ERROR, e);
+			} // Multiple streams were opened. Only the last is closed.
 		}
-	}
+	}  
 
 	@Override
 	public String supprimerLigne(String code_commune_INSEE) {
+		Connection con = null;
+		Statement stmt = null;
 		try {
-			Connection con = JDBCConfiguration.getConnection();
-			Statement stmt = con.createStatement();
+			con = JDBCConfiguration.getConnection();
+			stmt = con.createStatement();
 			stmt.executeUpdate("DELETE FROM ville_france WHERE Code_commune_INSEE = '" + code_commune_INSEE + "'");
 			return "Bravo, la suppression de votre ville a fonctionnée";
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return "Echec, la suppression de votre ville n'a pas fonctionnée";
+		} finally {
+
+			try {
+				if (stmt != null)
+					stmt.close();
+			} catch (SQLException e) {
+				LOGGER.log(Level.ERROR, e);
+			} // Multiple streams were opened. Only the last is closed.
 		}
 	}
 }
