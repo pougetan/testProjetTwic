@@ -1,41 +1,33 @@
 package com.config;
 
+import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import com.dao.VilleDao;
-import com.dao.VilleDaoImpl;
-import  java.sql.Connection;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+@Configuration
 public class JDBCConfiguration {
+	
 
-	private String url;
-	private String username;
-	private String password;
+	@Bean
+	public static Connection getConnection() throws SQLException {
+		String url = "jdbc:postgresql://127.0.0.1:15432/twic";
+		String user = "postgres";
+		String passwd = "postgres";
+		Connection conn = null;
 
-	JDBCConfiguration(String url, String username, String password) {
-		this.url = url;
-		this.username = username;
-		this.password = password;
-	}
-
-	public static JDBCConfiguration getInstance() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-		} catch (ClassNotFoundException e) {
+			Class.forName("org.postgresql.Driver");
+			conn = DriverManager.getConnection(url, user, passwd);
+			System.out.println("Connecté");
 
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Erreur");
+			System.exit(0);
 		}
-
-		JDBCConfiguration instance = new JDBCConfiguration("jdbc:mysql://192.168.56.101/maven", "gpi2", "network");
-		return instance;
-	}
-
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url, username, password);
-	} 
-
-	// Récupération du Dao
-	public VilleDao getVilleDao() {
-		return new VilleDaoImpl(this);
+		return conn;
 	}
 }

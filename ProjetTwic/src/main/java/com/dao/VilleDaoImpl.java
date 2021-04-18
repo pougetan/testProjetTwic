@@ -1,70 +1,124 @@
 package com.dao;
 
-
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
+import java.sql.PreparedStatement;
+
+import org.springframework.stereotype.Repository;
 
 import com.config.JDBCConfiguration;
-import  java.sql.Connection;
-import java.sql.PreparedStatement;
-import  java.sql.Statement;
+import com.dto.Ville;
 
+@Repository
 public class VilleDaoImpl implements VilleDao {
+	public ArrayList<Ville> getInfoVille() {
+		Ville ville = null;
+		ArrayList<Ville> villes = new ArrayList<Ville>();
+		Connection con = null;
 
-	private JDBCConfiguration jdbcConfiguration;
+		String requete = "SELECT * FROM ville_france";
 
-	public VilleDaoImpl(JDBCConfiguration jdbcConfiguration) {
-        this.jdbcConfiguration = jdbcConfiguration;
-    }
-	
-	@Override
-	public String afficheVilles() {
-		Connection connexion = null;
-        Statement statement = null;
-        ResultSet resultat = null;
-        List<String> villes = new ArrayList<String>();
-        String str = "";
-            try {
-				connexion = jdbcConfiguration.getConnection();
-				statement = connexion.createStatement();
-	            resultat = statement.executeQuery("SELECT Nom_commune FROM ville_france;");
-	            
-	            while(resultat.next()) {
-	            	villes.add(resultat.getString("Nom_commune"));
-	            	str += "nom commune : "+resultat.getString("Nom_commune") + "<br/>";
-	            }
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		try {
+			con = JDBCConfiguration.getConnection();
+			Statement stmt = con.createStatement();
+			ResultSet rs = stmt.executeQuery(requete);
+			while (rs.next()) {
+				ville = new Ville();
+				ville.setCodeCommune(rs.getString("Code_commune_INSEE"));
+				ville.setCodePostal(rs.getString("Code_postal"));
+				ville.setNomCommune(rs.getString("Nom_commune"));
+				ville.setLibelleAcheminement(rs.getString("Libelle_acheminement"));
+				ville.setLigne(rs.getString("Ligne_5"));
+				ville.setLatitude(rs.getString("Latitude"));
+				ville.setLongitude(rs.getString("Longitude"));
+				villes.add(ville);
 			}
-       System.out.println(str);
-       return str;
+			con.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return villes;
 	}
-	
-	public String chercheVillesCP(String cp) {
-		
-		Connection connexion = null;
-        PreparedStatement statement = null;
-        ResultSet resultat = null;
-        String result="";
-            try {
-				connexion = jdbcConfiguration.getConnection();
-	            statement = connexion.prepareStatement("SELECT Nom_commune FROM ville_france WHERE Code_postal = ?;");
-	            statement.setString(1, cp);
-	            resultat = statement.executeQuery();
-	            
-	            resultat.next();
-	            
-	            result = resultat.getString("Nom_commune");
-	            
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+	public ArrayList<Ville> getInfoVilles(String param) {
+		ArrayList<Ville> villes = new ArrayList<Ville>();
+		Ville ville = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		Connection con = null;
+
+		try {
+			con = JDBCConfiguration.getConnection();
+			stmt = con.prepareStatement("SELECT * FROM ville_france WHERE Code_postal = ?;");
+			stmt.setString(1, param);
+			rs = stmt.executeQuery();
+			
+			while (rs.next()) {
+				ville = new Ville();
+				ville.setCodeCommune(rs.getString("Code_commune_INSEE"));
+				ville.setCodePostal(rs.getString("Code_postal"));
+				ville.setNomCommune(rs.getString("Nom_commune"));
+				ville.setLibelleAcheminement(rs.getString("Libelle_acheminement"));
+				ville.setLigne(rs.getString("Ligne_5"));
+				ville.setLatitude(rs.getString("Latitude"));
+				ville.setLongitude(rs.getString("Longitude"));
+				villes.add(ville);
 			}
-		
-		return result;
-		
+			return villes;
+		} catch (SQLException e) {
+			System.out.println("Une erreur s'est produite.");
+			return null;
+		}
+	}
+
+	public String setVille(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
+			String Latitude, String Longitude , String Code_commune_INSEE ) {
+		try {
+			Connection con = JDBCConfiguration.getConnection();
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate(
+					"Insert into ville_france(Code_commune_INSEE,Nom_commune,Libelle_acheminement,Ligne_5,Latitude,Code_postal,Longitude)"
+							+ " values(" + Code_commune_INSEE + ",'" + Nom_commune + "','"
+							+ Libelle_acheminement + "','" + Ligne_5 + "'," + Latitude
+							+ "," + Code_postal + "," + Longitude + ")");
+			return "Bravo, la création de votre ville a fonctionnée";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "Echec, la création de votre ville n'a pas fonctionnée";
+		}
+	}
+
+	
+	public String mettreAJour(String Nom_commune, String Code_postal, String Libelle_acheminement, String Ligne_5,
+			String Latitude, String Longitude , String Code_commune_INSEE ) {
+		try {
+			Connection con = JDBCConfiguration.getConnection();
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("UPDATE ville_france SET Nom_commune=' " + Nom_commune + "', Code_postal='"
+					+ Code_postal + "', Libelle_acheminement='" + Libelle_acheminement
+					+ "', Ligne_5 = '" + Ligne_5 + "', Latitude='" + Latitude + "', Longitude='"
+					+ Longitude + "'  WHERE Code_commune_INSEE=' " + Code_commune_INSEE + "'");
+			return "Bravo, la mise à jour de votre ville a fonctionnée";
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "Echec, la mise à jour de votre ville n'a pas fonctionnée";
+		}
+	}
+
+	@Override
+	public String supprimerLigne(String code_commune_INSEE) {
+		try {
+			Connection con = JDBCConfiguration.getConnection();
+			Statement stmt = con.createStatement();
+			stmt.executeUpdate("DELETE FROM ville_france WHERE Code_commune_INSEE = '" + code_commune_INSEE + "'");
+			return "Bravo, la suppression de votre ville a fonctionnée";
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return "Echec, la suppression de votre ville n'a pas fonctionnée";
+		}
 	}
 }
